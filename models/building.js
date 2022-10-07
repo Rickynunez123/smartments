@@ -82,5 +82,23 @@ createBuilding();
 // updateBuilding('633d915649017e6452d9f9b2');
 // run();
 
+/*  
+    Validation requirements from Joi
+*/
+function validateBuilding(building){
+    const schema = Joi.object({
+        buildingName: Joi.string().min(3).required(),
+        buildingAddress: Joi.string().min(3).required(),
+        numberOfApartments: Joi.number().min(0).required(),
+        monthlyRent:  Joi.number().min(0).required(),
+        ownsBy:  Joi.string().min(3).required(),
+        apartmentsAvailable:  Joi.number().min(0).required()
+
+    });
+
+    //input validation using joi
+    return schema.validate(building);
+}
+
 exports.Building = Building;
 exports.updateApartments = updateApartments;

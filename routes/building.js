@@ -1,7 +1,6 @@
 const {Building, validateBuilding} = require('../models/building');
 const mongoose = require('mongoose');
 const express = require('express');
-const { Building } = require('../models/building');
 const router = express.Router(); //use when using express in different files 
 
 
@@ -79,24 +78,6 @@ router.get('/:id', async (req, res) => {
     res.send(building);
 });
 
-
-/*  
-    Validation requirements from Joi
-*/
-function validateBuilding(building){
-    const schema = Joi.object({
-        buildingName: Joi.string().min(3).required(),
-        buildingAddress: Joi.string().min(3).required(),
-        numberOfApartments: Joi.number().min(0).required(),
-        monthlyRent:  Joi.number().min(0).required(),
-        ownsBy:  Joi.string().min(3).required(),
-        apartmentsAvailable:  Joi.number().min(0).required()
-
-    });
-
-    //input validation using joi
-    return schema.validate(building);
-}
 
 
 module.exports = router;
