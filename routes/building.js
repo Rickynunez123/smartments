@@ -1,76 +1,102 @@
-const { number } = require('joi');
+const {Building, validateBuilding} = require('../models/building');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:true, useNewUrlParser:true})
-.then(() => console.log('Connected to MonogDB...'))
-.catch(err => console.error('Could not connect to MongoDB...', err));
+const express = require('express');
+const { Building } = require('../models/building');
+const router = express.Router(); //use when using express in different files 
 
-const buildingSchema = new mongoose.Schema({
-    buildingName: String,
-    buildingAddress: String,
-    numberOfApartments: Number,
-    monthlyRent: Number,
-    ownsBy: String,
-    apartmentsAvailable: Number
+
+///////////////////////////////////////////////////////
+/*              Adding Routes                        */
+////////////////////////////////////////////////////////
+
+
+
+router.get('/', async (req, res) => {
+    const building = await Building.find().sort('name');
+    res.send(building);
 });
 
-const Building = mongoose.model('Building', buildingSchema);
 
-/*  Add filters  */
-async function getBuilding(){
-    return await Building
-    .find()
-    .sort({monthlyRent: 1})
-    .select({buildingName: 1, monthlyRent: 1, apartmentsAvailable: 1})
-}
+//POST
+router.post('/', async (req, res) => {
+    const result = validateBuilding(req.body);
+    if (result.error) return res.status(400).send(result.error.details[0].message);
+      
+    
+    let building = new Building({ 
+        buildingName: req.body.buildingName,
+        buildingAddress: req.body.buildingAddress,
+        numberOfApartments: req.body.numberOfApartments,
+        monthlyRent: req.body.monthlyRent,
+        ownsBy: req.body.ownsBy,
+        apartmentsAvailable: req.body.apartmentsAvailable
 
-/*  print  */
-async function run(){
-    const landlord = await getBuilding();
-    console.log(landlord);
-}
+     });
+    building = await building.save();
+    res.send(building); //return course to the client 
+});
 
-async function createBuilding(){
-    const building = new Building({
-        buildingName: 'Trump Tower',
-        buildingAddress: '1800 Oak NY',
-        numberOfApartments: 50,
-        monthlyRent: 5_000,
-        ownsBy: 'Donald Trump',
-        apartmentsAvailable: 48
+
+/*  PUT
+    This will update any attribute value 
+*/ 
+router.put('/:id', async (req, res) => {
+    //input validation using joi
+    const result = validateBuilding(req.body);
+    if (result.error)
+        return res.status(400).send(result.error.details[0].message);
+            
+    const building = await Building.findByIdAndUpdate(req.params.id, {
+        buildingName: req.body.buildingName,
+        buildingAddress: req.body.buildingAddress,
+        numberOfApartments: req.body.numberOfApartments,
+        monthlyRent: req.body.monthlyRent,
+        ownsBy: req.body.ownsBy,
+        apartmentsAvailable: req.body.apartmentsAvailable}, {
+        new: true
+    })
+
+    if(!building) return res.status(404).send('The building with the given ID was not found');
+    
+    res.send(building);
+});
+
+
+
+/*  Delete  */
+router.delete('/:id',async (req, res) => {
+    const building = await Building.findByIdAndRemove(req.params.id);
+    if(!building) return res.status(404).send('The building with the given ID was not found');
+    res.send(building);
+});
+
+
+/*  GET  */
+router.get('/:id', async (req, res) => {
+    const building = await Building.findById(req.params.id);
+    if(!building) return res.status(404).send('The building with the given ID was not found');
+   
+    res.send(building);
+});
+
+
+/*  
+    Validation requirements from Joi
+*/
+function validateBuilding(building){
+    const schema = Joi.object({
+        buildingName: Joi.string().min(3).required(),
+        buildingAddress: Joi.string().min(3).required(),
+        numberOfApartments: Joi.number().min(0).required(),
+        monthlyRent:  Joi.number().min(0).required(),
+        ownsBy:  Joi.string().min(3).required(),
+        apartmentsAvailable:  Joi.number().min(0).required()
+
     });
-try{
-    const result = await building.save();
-    console.log(result);
-}
 
-    catch (ex) {
-        console.log(ex.message);
-}
-}
-
-/*  Updating queries  */
-async function updateBuilding(id){
-    const building = await Building.findById(id);
-    if(! building) return;
-
-    building.monthlyRent = 10_000;
-
-    const result = await building.save();
-    console.log(result);
-}
-
-async function updateApartments(id){
-    const result = await Building.updateOne({ _id: id}, {
-        $set: {
-            buildingName: 'Trump Tower',
-            apartmentsAvailable: 47
-        }
-    });
-    console.log(result);
+    //input validation using joi
+    return schema.validate(building);
 }
 
 
-// createBuilding();
-// updateApartments('633d9b0143eba8ae1c586c95');
-// updateBuilding('633d915649017e6452d9f9b2');
-run();
+module.exports = router;
