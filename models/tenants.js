@@ -11,31 +11,29 @@ mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:tru
     Adding the attributes with the data type 
     Tenants model
 */
-const Tenant = mongoose.model('Tenant', mongoose.Schema({
+const tenantSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    lastName: {type: String},
-    userName: {type: String},
-    password: {type: String},
+    lastName: {type: String, required: true},
+    userName: String,
+    password: String,
     renting: {type: Boolean},
-    annualIncome: Number,
-    buildingName: String, 
-    //if they are renting, then they need to submit their annual income, otherwise no
-    apartmentNumber: {
-        type: Number,
-        required: function() {return this.renting; }
-    }
-}));
+    phone: Number,
+    annualIncome: Number //if they are renting, then they need to submit their annual income, otherwise no
+});
+
+const Tenant = mongoose.model('Tenant', tenantSchema);
 
 
 async function createTenant(){
     const tenant = new Tenant({
-        name: 'alan ',
+        name: 'Ricky ',
         lastName: 'Nunez',
         userName: 'rnunezcu',
         password: 'changeMe',
-        renting: false,
+        renting: true,
+        phone: 9381418888,
         annualIncome: 200_000
-    });
+        });
     /*  handling rejections of promises  */
     try{
         const result = await tenant.save();
@@ -54,7 +52,7 @@ async function removeTenant(id){
     console.log(result);
 }
 
-createTenant();
+// createTenant();
 // removeTenant('633d8c8bd0005efb05a8635e');
 
 
@@ -66,6 +64,7 @@ function validateTenant(tenant){
         userName: Joi.string().min(3).required(),
         password: Joi.string().min(3).required(),
         renting: Joi.boolean(),
+        phone: Joi.number(),
         annualIncome: Joi.number().min(0)
 
     });
@@ -76,3 +75,4 @@ function validateTenant(tenant){
 
 exports.Tenant = Tenant;
 exports.validateTenant = validateTenant;
+exports.tenantSchema = tenantSchema;

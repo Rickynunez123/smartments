@@ -20,12 +20,14 @@ router.post('/', async (req, res) => {
     const result = validateTenant(req.body);
     if (result.error) return res.status(400).send(result.error.details[0].message);
     
+
     let tenant = new Tenant({ 
         name: req.body.name,
         lastName: req.body.lastName,
         userName: req.body.userName,
         password: req.body.password,
         renting: req.body.renting,
+        phone: req.body.phone
 
      });
     tenant = await tenant.save();
@@ -45,7 +47,8 @@ router.put('/:id', async (req, res) => {
         lastName: req.body.lastName,
         userName: req.body.userName,
         password: req.body.password,
-        renting: req.body.renting
+        renting: req.body.renting,
+        phone: req.body.phone
 
     }, {
         new: true
@@ -69,7 +72,7 @@ router.delete('/:id',async (req, res) => {
 /*  GET  */
 router.get('/:id', async (req, res) => {
     const tenant = await Tenant.findById(req.params.id);
-    if(!tenant) return res.status(404).send('The course with the given ID was not found');
+    if(!tenant) return res.status(404).send('The tenant with the given ID was not found');
    
     res.send(tenant);
 });

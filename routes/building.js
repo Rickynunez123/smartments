@@ -1,7 +1,11 @@
 const {Building, validateBuilding} = require('../models/building');
+const {Tenant} = require('../models/tenants');
+const {Apartment} = require('../models/apartments');
+const { Landlord } = require('../models/landlord');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router(); //use when using express in different files 
+
 
 
 ///////////////////////////////////////////////////////
@@ -16,24 +20,53 @@ router.get('/', async (req, res) => {
 });
 
 
+
 //POST
 router.post('/', async (req, res) => {
     const result = validateBuilding(req.body);
     if (result.error) return res.status(400).send(result.error.details[0].message);
       
+    const tenant = await Tenant.findById(req.body.tenantId);
+    if(!tenant) return res.status(400).send('Invalid Tenant');
+
+    const apartment = await Apartment.findById(req.body.apartmentId);
+    if(!apartment) return res.status(400).send('Invalid apartment');
     
+    const landlord = await Landlord.findById(req.body.landlordId);
+    if(!landlord) return res.status(400).send('Invalid landlord');
+
+
     let building = new Building({ 
         buildingName: req.body.buildingName,
         buildingAddress: req.body.buildingAddress,
         numberOfApartments: req.body.numberOfApartments,
-        monthlyRent: req.body.monthlyRent,
-        ownsBy: req.body.ownsBy,
-        apartmentsAvailable: req.body.apartmentsAvailable
+        apartmentsAvailable: req.body.apartmentsAvailable,
+        tenant: {
+            _id: tenant._id,
+            name: tenant.name,
+            lastName: tenant.lastName,
+            phone: tenant.phone
+        },
+        apartment: {
+            _id: apartment._id,
+            apartmentNumber: apartment.apartmentNumber,
+            monthlyRent: apartment.monthlyRent
+
+        },
+        landlord: {
+            name: landlord.name,
+            lastName: landlord.lastName,
+            phone: landlord.phone
+        }
+
 
      });
     building = await building.save();
     res.send(building); //return course to the client 
 });
+
+
+
 
 
 /*  PUT
@@ -42,16 +75,16 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     //input validation using joi
     const result = validateBuilding(req.body);
-    if (result.error)
-        return res.status(400).send(result.error.details[0].message);
+    if (result.error) return res.status(400).send(result.error.details[0].message);
             
     const building = await Building.findByIdAndUpdate(req.params.id, {
         buildingName: req.body.buildingName,
         buildingAddress: req.body.buildingAddress,
         numberOfApartments: req.body.numberOfApartments,
-        monthlyRent: req.body.monthlyRent,
         ownsBy: req.body.ownsBy,
-        apartmentsAvailable: req.body.apartmentsAvailable}, {
+        apartmentsAvailable: req.body.apartmentsAvailable
+    
+    }, {
         new: true
     })
 
