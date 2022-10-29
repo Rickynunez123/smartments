@@ -1,0 +1,5 @@
+401 unautorized: when the user tries to access a particular resource but they dont supply a valid jsonweb token
+
+403 forbidden: When they send a json web token and they do not have access
+
+404 not found

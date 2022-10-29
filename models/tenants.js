@@ -1,9 +1,11 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const { userSchema } = require('./user');
 
 
 
-mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:true, useNewUrlParser:true})
+
+mongoose.connect('mongodb+srv://rnunezcu123:Tsonga12345@smartments.cldqt31.mongodb.net/?retryWrites=true&w=majority', {useUnifiedTopology:true, useNewUrlParser:true})
 .then(() => console.log('Connected to MonogDB...'))
 .catch(err => console.error('Could not connect to MongoDB...', err));
 
@@ -12,18 +14,19 @@ mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:tru
     Tenants model
 */
 const tenantSchema = new mongoose.Schema({
-    name: {type: String, required: true},
-    lastName: {type: String, required: true},
-    userName: String,
-    password: String,
-    renting: {type: Boolean},
-    phone: Number,
-    annualIncome: Number //if they are renting, then they need to submit their annual income, otherwise no
+    phone: String,
+    pictureOfID: Boolean,//cahnge to an actual picture later 
+    annualIncome: Number, 
+    user: {
+        type: userSchema,
+        required: true
+    }
 });
 
 const Tenant = mongoose.model('Tenant', tenantSchema);
 
 
+//CHANGE 
 async function createTenant(){
     const tenant = new Tenant({
         name: 'Ricky ',
@@ -45,30 +48,23 @@ async function createTenant(){
 }
 
 
-
+//CAHNGE 
 async function removeTenant(id){
     // const result =  await Tenant.deleteOne({ _id: id });
     const result = await Tenant.findByIdAndRemove(id);
     console.log(result);
 }
 
-// createTenant();
-// removeTenant('633d8c8bd0005efb05a8635e');
-
 
 /*  FUNCTION  */
 function validateTenant(tenant){
     const schema = Joi.object({
-        name: Joi.string().min(3).required(),
-        lastName: Joi.string().min(3).required(),
-        userName: Joi.string().min(3).required(),
-        password: Joi.string().min(3).required(),
-        renting: Joi.boolean(),
-        phone: Joi.number(),
-        annualIncome: Joi.number().min(0)
-
+        phone: Joi.string(),
+        annualIncome: Joi.number().min(0),
+        pictureOfID: Joi.boolean().required(),
+        userId: Joi.string().required(),
     });
-
+    
     //input validation using joi
     return schema.validate(tenant);
 }
@@ -76,3 +72,6 @@ function validateTenant(tenant){
 exports.Tenant = Tenant;
 exports.validateTenant = validateTenant;
 exports.tenantSchema = tenantSchema;
+
+// createTenant();
+// removeTenant('633d8c8bd0005efb05a8635e');

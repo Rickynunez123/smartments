@@ -2,6 +2,8 @@ const {Tenant, validateTenant} = require('../models/tenants'); //object destruct
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router(); //use when using express in different files 
+const { User, validateUser } = require('../models/user');
+
 
 
 ///////////////////////////////////////////////////////
@@ -20,17 +22,39 @@ router.post('/', async (req, res) => {
     const result = validateTenant(req.body);
     if (result.error) return res.status(400).send(result.error.details[0].message);
     
+    const user = await User.findById(req.body.userId);
+    if(!user) return res.status(400).send('Invalid user');
+    
 
     let tenant = new Tenant({ 
-        name: req.body.name,
-        lastName: req.body.lastName,
-        userName: req.body.userName,
-        password: req.body.password,
-        renting: req.body.renting,
-        phone: req.body.phone
+        phone: req.body.phone,
+        pictureOfID: req.body.pictureOfID,
+        annualIncome: req.body.annualIncome,
+        user: {
+            _id: user._id,
+            name: user.name,
+            lastName: user.lastName,
+            email: user.email,
+            password: user.password,
+            isAdmin: user.isAdmin,
+            tenant: [
+                {
+                    phone: req.body.phone,
+                    pictureOfID: req.body.pictureOfID,
+                    annualIncome: req.body.annualIncome
+                }
+            ]
+        }
 
      });
     tenant = await tenant.save();
+    const user1 = await User.findByIdAndUpdate(user.id, {
+        ...tenant.user //spread operator 
+    }, {
+        new: true
+    })
+
+    if(!user1) return res.status(404).send('The user with the given ID was not found');
     res.send(tenant); //return course to the client 
 });
 

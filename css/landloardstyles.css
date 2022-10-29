@@ -1,0 +1,49 @@
+:root{
+    --color-primary: #ff3400;
+    --color-secondary: #ff5e00;
+    --color-bg: #192022;
+    --color-bg-secondary: #252b2c;
+    --color-bg-tertiary: #505455;
+    --color-text-header: #fff;
+    --color-text-btn: #fff;
+    --color-text-body: #ebebeb;
+    --color-text-placeholder: #afafaf;
+    --border-radius:20px;
+}
+
+body{
+    background-color: var(--color-bg);
+}
+
+
+/*Sidebar*/
+
+.sidebar{
+
+    height: 700px;
+    width: 175px;
+    margin:20px;
+    margin-right: 50px;
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--border-radius);
+    float: left;
+ 
+}
+
+.sidebar a{
+    display:block;
+    padding: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--color-text-header);
+}
+
+.sidebar a.active{
+    background-color: var(--color-secondary);   
+}
+
+.sidebar a:hover:not(.active) {
+    background-color: var(--color-secondary)
+  }
+
+ 

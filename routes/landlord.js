@@ -2,6 +2,8 @@ const {Landlord, validateLandlord} = require('../models/landlord');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const { User, validateUser } = require('../models/user');
+
 
 router.get('/', async (req, res) => {
     const landlord = await Landlord.find();
@@ -13,15 +15,42 @@ router.post('/', async (req, res) => {
     const result = validateLandlord(req.body);
     if(result.error) return res.status(400).send(result.error.details[0].message);
 
+    /*  Get the user id  */
+    const user = await User.findById(req.body.userId);
+    if(!user) return res.status(400).send('Invalid user');
+
     let landlord = new Landlord({
-        name: req.body.name,
-        lastName: req.body.lastName,
-        userName: req.body.userName,
-        phone: req.body.phone
+        phone: req.body.phone,
+        pictureOfID: req.body.pictureOfID,
+        user: {
+            _id: user._id,
+            name: user.name,
+            lastName: user.lastName,
+            email: user.email,
+            password: user.password,
+            isAdmin: user.isAdmin,
+            landlord: [
+                {
+                    phone: req.body.phone,
+                    pictureOfID: req.body.pictureOfID,
+                }
+            ]
+        }
     });
     landlord = await landlord.save();
+    //return the user information into the table 
+    const user1 = await User.findByIdAndUpdate(user.id, {
+        ...landlord.user //spread operator 
+    }, {
+        new: true
+    })
+
+    if(!user1) return res.status(404).send('The user with the given ID was not found');
     res.send(landlord);
 });
+
+
+
 
 router.put('/:id', async (req, res)=> {
     const result = validateLandlord(req.body);

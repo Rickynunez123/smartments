@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Mail Test</title>
+</head>
+
+<body>
+
+<?php
+$to = "seanmclp@gmail.com";
+$subject = "Test mail";
+$message = "Hello! Email messaging setup sucessfully!";
+$from = "no-reply@smartments.rentals";
+$headers = "From:" . $from;
+
+if(mail($to,$subject,$message,$headers)) {
+  echo "Mail Sent.";
+}
+else
+{
+  echo 
+
+}
+?>
+
+</body>
+</html>

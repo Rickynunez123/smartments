@@ -1,10 +1,11 @@
 const {Building, validateBuilding} = require('../models/building');
-const {Tenant} = require('../models/tenants');
 const {Apartment} = require('../models/apartments');
-const { Landlord } = require('../models/landlord');
+const { User, validateUser } = require('../models/user');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router(); //use when using express in different files 
+const auth =  require('../middleware/auth');
+const admin = require('../middleware/admin');
 
 
 
@@ -22,18 +23,14 @@ router.get('/', async (req, res) => {
 
 
 //POST
-router.post('/', async (req, res) => {
+//add the middleware function to make sure that only autorhizes users can create apartments 
+router.post('/',async (req, res) => {
     const result = validateBuilding(req.body);
     if (result.error) return res.status(400).send(result.error.details[0].message);
-      
-    const tenant = await Tenant.findById(req.body.tenantId);
-    if(!tenant) return res.status(400).send('Invalid Tenant');
 
-    const apartment = await Apartment.findById(req.body.apartmentId);
-    if(!apartment) return res.status(400).send('Invalid apartment');
     
-    const landlord = await Landlord.findById(req.body.landlordId);
-    if(!landlord) return res.status(400).send('Invalid landlord');
+    const user = await User.findById(req.body.userId);
+    if(!user) return res.status(400).send('Invalid user');
 
 
     let building = new Building({ 
@@ -41,22 +38,14 @@ router.post('/', async (req, res) => {
         buildingAddress: req.body.buildingAddress,
         numberOfApartments: req.body.numberOfApartments,
         apartmentsAvailable: req.body.apartmentsAvailable,
-        tenant: {
-            _id: tenant._id,
-            name: tenant.name,
-            lastName: tenant.lastName,
-            phone: tenant.phone
-        },
-        apartment: {
-            _id: apartment._id,
-            apartmentNumber: apartment.apartmentNumber,
-            monthlyRent: apartment.monthlyRent
-
-        },
-        landlord: {
-            name: landlord.name,
-            lastName: landlord.lastName,
-            phone: landlord.phone
+        apartment: [],
+        user: {
+            _id: user._id,
+            name: user.name,
+            lastName : user.lastName,
+            email: user.email,
+            password: user.password,
+            landlord: user.landlord
         }
 
 
@@ -94,9 +83,9 @@ router.put('/:id', async (req, res) => {
 });
 
 
-
+//to delete first the user needs to have a json web token and if that is true it also needs to be an admin 
 /*  Delete  */
-router.delete('/:id',async (req, res) => {
+router.delete('/:id', [auth, admin] ,async (req, res) => {
     const building = await Building.findByIdAndRemove(req.params.id);
     if(!building) return res.status(404).send('The building with the given ID was not found');
     res.send(building);

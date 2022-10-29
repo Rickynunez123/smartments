@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const { buildingSchema } = require('./building');
+const { userSchema } = require('./user');
 
 
-mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:true, useNewUrlParser:true})
+mongoose.connect('mongodb+srv://rnunezcu123:Tsonga12345@smartments.cldqt31.mongodb.net/?retryWrites=true&w=majority', {useUnifiedTopology:true, useNewUrlParser:true})
 .then(() => console.log('Connected to MonogDB...'))
 .catch(err => console.error('Could not connect to MongoDB...', err));
 
@@ -14,7 +16,12 @@ const apartmentSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         max: 8
+    },
+    building: {
+        type: buildingSchema,
+        required: true
     }
+
 })
 
 const Apartment = mongoose.model('Apartment', apartmentSchema);
@@ -54,10 +61,11 @@ try{
 
 function validateApartment(apartment){
     const schema = Joi.object({
-        apartmentNumber: Joi.number().required,
-        monthlyRent: Joi.number().min(40).required,
+        apartmentNumber: Joi.number().required(),
+        monthlyRent: Joi.number().required(),
         securityDeposit: Joi.number().min(40).required(),
-        tenatsInApartment: Joi.number().min(1).required()
+        tenatsInApartment: Joi.number().min(1).required(),
+        buildingId: Joi.string().required()
 
     });
 

@@ -1,0 +1,5 @@
+{
+    "jwtPrivateKey" : "smartments_jwtPrivateKey",
+    "mongoURI" : "mongodb+srv://rnunezcu123:Tsonga12345@smartments.cldqt31.mongodb.net/?retryWrites=true&w=majority"
+
+}

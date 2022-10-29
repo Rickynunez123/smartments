@@ -1,15 +1,18 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const { userSchema } = require('./user');
 
-mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:true, useNewUrlParser:true})
+mongoose.connect('mongodb+srv://rnunezcu123:Tsonga12345@smartments.cldqt31.mongodb.net/?retryWrites=true&w=majority', {useUnifiedTopology:true, useNewUrlParser:true})
 .then(() => console.log('Connected to MonogDB...'))
 .catch(err => console.error('Could not connect to MongoDB...', err));
 
 const landlordSchema = new mongoose.Schema({
-    name: {type: String, required: true},
-    lastName: String,
-    userName: String,
-    phone: Number
+    phone: String,
+    pictureOfID: Boolean,//cahnge to an actual picture later 
+    user: {
+        type: userSchema,
+        required: true
+    }
 });
 
 const Landlord = mongoose.model('Landlord', landlordSchema);
@@ -34,10 +37,9 @@ async function createLandlord(){
 
 function validateLandlord(landlord){
     const schema = Joi.object({
-        name: Joi.string().min(3).required(),
-        lastName: Joi.string().min(3).required(),
-        userName: Joi.string().min(3).required(),
-        phone: Joi.number()
+        phone: Joi.string(),
+        pictureOfID: Joi.boolean().required(),
+        userId: Joi.string().required()
     });
     return schema.validate(landlord);
 }

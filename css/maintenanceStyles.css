@@ -1,0 +1,44 @@
+.sidebar{
+
+    height: 700px;
+    width: 175px;
+    margin:20px;
+    margin-right: 50px;
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--border-radius);
+    float: left;
+ 
+}
+
+.sidebar a{
+    display:block;
+    padding: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--color-text-header);
+}
+@import url('tenantstyles.css');
+
+.sidebar a.active{
+    background-color: var(--color-secondary);   
+}
+
+.sidebar a:hover:not(.active) {
+    background-color: var(--color-secondary)
+  }
+
+input[type=radio] {
+    transform: scale(3);
+}
+
+.radioleft {
+    margin-left: 1em;
+}
+
+#problem {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-bg-secondary);
+    text-color:white;
+    color: #fff;
+}
+

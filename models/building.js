@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
-const {tenantSchema } = require('./tenants');
-const { apartmentSchema } = require('./apartments');
-const { landlordSchema } = require('./landlord')
+const { userSchema } = require('./user');
 
 
-mongoose.connect('mongodb://localhost:27017/smartments', {useUnifiedTopology:true, useNewUrlParser:true})
+mongoose.connect('mongodb+srv://rnunezcu123:Tsonga12345@smartments.cldqt31.mongodb.net/?retryWrites=true&w=majority', {useUnifiedTopology:true, useNewUrlParser:true})
 .then(() => console.log('Connected to MonogDB...'))
 .catch(err => console.error('Could not connect to MongoDB...', err));
 
@@ -22,18 +20,23 @@ const buildingSchema = new mongoose.Schema({
         requires: true,
         min: 0,
         max: 30},
-    tenant: {
-        type: tenantSchema,
+    user: {
+        type: userSchema,
         required: true
     },
-    apartment: {
-        type: apartmentSchema,
-        required: true
-    },
-    landlord: {
-        type: landlordSchema,
-        required: true
+    apartment: [
+        {
+        apartmentNumber: Number,
+        monthlyRent: Number,
+        securityDeposit: Number, 
+        tenatsInApartment: {
+        type: Number,
+        min: 1,
+        max: 8
     }
+    }
+]
+
 });
 
 
@@ -105,13 +108,10 @@ async function run(){
 function validateBuilding(building){
     const schema = Joi.object({
         buildingName: Joi.string().min(3).required(),
-        buildingAddress: Joi.string().min(3).required(),
+        buildingAddress: Joi.string().min(3).max(200).required(),
         numberOfApartments: Joi.number().min(0).required(),
         apartmentsAvailable: Joi.number(),
-        tenantId: Joi.string().required(),
-        apartmentId: Joi.string().required(),
-        landlordId: Joi.string().required()
-
+        userId: Joi.string().required(),
     });
 
     //input validation using joi
