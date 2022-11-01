@@ -33,6 +33,7 @@ router.post('/', async (req, res) => {
         user: {
             _id: user._id,
             name: user.name,
+            username: user.username,
             lastName: user.lastName,
             email: user.email,
             password: user.password,
