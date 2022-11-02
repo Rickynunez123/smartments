@@ -12,28 +12,53 @@ const {Landlord } = require('../models/landlord');
 
 /**
  * @swagger
- * paths:
- *  /api/smartments/users/{id}:
- *  get:
- *      description: get a single user, it required the id
- *  parameters:
- *      - in: path
- *        name: id
- *          schema:
- *              type: string
- *          required: true
- *          description: it retrieves the user information
- *      responses:
- *           200: 
- *              description: A succesful response 
- *              contents:
- *                  application/json
- *           404:
- *              description: The id of the user was not found 
- * 
- *          
- * 
- * 
+ * components:
+ *   schemas:
+ *     UserRegistration:
+ *       type: object
+ *       properties:
+ *         username: 
+ *           type: string
+ *           example: rickynunez
+ *         Last name:
+ *           type: string
+ *           example: Nunez
+ *         First name:
+ *           type: string
+ *           example: Ricardo
+ *         email:
+ *           type: string
+ *           example: nunezrc@mtu.edu
+ *         password:
+ *           type: string
+ *           example: 12345
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Users 
+ *     description: Everything about smartments users
+ */
+
+/**
+ * @swagger
+ * /api/smartments/users/{id}:
+ *   get:
+ *     tags: [Users]
+ *     description: get a single user, it required the id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: It retrieves the user
+ *     responses:
+ *       200:
+ *         description: A successful response
+ *       404:
+ *         description: The id of the user was not found    
  */
 router.get('/:id', async (req, res) => {
     // const user = await User.findById(req.user._id).select('-password'); //hidding password
@@ -44,9 +69,42 @@ router.get('/:id', async (req, res) => {
     res.send(user);
 })
 
+/*
+ requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+*/
 
-
-router.post('/', async (req, res) => {
+/**
+ * @swagger
+ * /api/smartments/users:
+ *   post:
+ *     tags: [Users]
+ *     description: get a single user, it required the id
+ *     requestBody:
+ *       description: Create a new user in the database
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/UserRegistration'
+ *           
+ *     responses:
+ *       200:
+ *         description: A successful response
+ *       404:
+ *         description: The id of the user was not found    
+ */
+ router.post('/', async (req, res) => {
     const result = validateUser(req.body);
     if (result.error) return res.status(400).send(result.error.details[0].message);
 

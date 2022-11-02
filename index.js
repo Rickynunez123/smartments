@@ -6,6 +6,7 @@ const Joi = require('joi');
 //Creating APIs doc
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const cors = require("cors");
 
 
 
@@ -59,6 +60,8 @@ require('./startup/prod')(app);
 //changes
 
 //adding middleware 
+
+app.use(cors());
 app.use(express.json());          //req.body
 app.use('/api/smartments/tenants', tenants);
 app.use('/api/smartments/building', buildings);
@@ -67,6 +70,7 @@ app.use('/api/smartments/landlord', landlord);
 app.use('/api/smartments/rental', rental);
 app.use('/api/smartments/users', users);
 app.use('/api/smartments/auth', auth);
+
 
 
 //apis
