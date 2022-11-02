@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
 const config = require('config');
-const Joi = require('joi');
+const Joi = require('joi'); 
+//Creating APIs doc
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+
 
 
 
@@ -16,6 +20,27 @@ if (!config.get('jwtPrivateKey')){
 mongoose.connect('mongodb+srv://rnunezcu123:Tsonga12345@smartments.cldqt31.mongodb.net/?retryWrites=true&w=majority', {useUnifiedTopology:true, useNewUrlParser:true})
 .then(() => console.log('Connected to MonogDB...'))
 .catch(err => console.error('Could not connect to MongoDB...', err));
+
+//APIs documentation
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Smartments API",
+            version: "1.0.0",
+            description: "An API fot Smartments"
+        },
+        servers: [
+            {
+                url: "https://obscure-ridge-22477.herokuapp.com"
+                // url: "http://localhost.com:3000" //testing put this in the url http://localhost:3000/api-docs/
+            }
+        ]
+    },
+    apis: ["./routes/*.js"]
+}
+
+const specs = swaggerJsDoc(options);
 
 
 /*  importing  */
@@ -43,6 +68,9 @@ app.use('/api/smartments/rental', rental);
 app.use('/api/smartments/users', users);
 app.use('/api/smartments/auth', auth);
 
+
+//apis
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 
 

@@ -23,7 +23,9 @@
     "joi-objectid": "^4.0.2",
     "joi-oid": "^1.1.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.6.4"
+    "mongoose": "^6.6.4",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0"
   },
   "description": ""
 }
