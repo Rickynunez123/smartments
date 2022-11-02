@@ -17,21 +17,21 @@ const {Landlord } = require('../models/landlord');
  *     UserRegistration:
  *       type: object
  *       properties:
- *         username: 
- *           type: string
- *           example: rickynunez
- *         Last name:
- *           type: string
- *           example: Nunez
- *         First name:
+ *         name: 
  *           type: string
  *           example: Ricardo
+ *         lastName: 
+ *           type: string
+ *           example: Nunez
+ *         username:
+ *           type: string
+ *           example: rnunezcu
  *         email:
  *           type: string
  *           example: nunezrc@mtu.edu
  *         password:
  *           type: string
- *           example: 12345
+ *           example: abcd12345
  */
 
 /**
@@ -90,7 +90,7 @@ router.get('/:id', async (req, res) => {
  * /api/smartments/users:
  *   post:
  *     tags: [Users]
- *     description: get a single user, it required the id
+ *     description: post user information, sign up 
  *     requestBody:
  *       description: Create a new user in the database
  *       content:
@@ -101,8 +101,8 @@ router.get('/:id', async (req, res) => {
  *     responses:
  *       200:
  *         description: A successful response
- *       404:
- *         description: The id of the user was not found    
+ *       400:
+ *         description: Email alread exists or username is already registered  
  */
  router.post('/', async (req, res) => {
     const result = validateUser(req.body);
