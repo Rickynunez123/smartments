@@ -55,7 +55,7 @@ const {Landlord } = require('../models/landlord');
 
 /**
  * @swagger
- * /api/smartments/users/{id}:
+ * /users/{id}:
  *  get:
  *      description: get a single user, it required the id
  *  parameters:
