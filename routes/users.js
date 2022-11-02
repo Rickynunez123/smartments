@@ -11,51 +11,8 @@ const {Tenant} = require('../models/tenants');
 const {Landlord } = require('../models/landlord');
 
 /**
- * components:
- *  schemas:
- *      User:
- *          type: Object 
- *          required:
- *              - name
- *              - lastName
- *              - username
- *              - email
- *              - password
- *          properties:
- *              tenant:
- *                  type: array
- *                  description: You need to create it from the tenant schema and the infromation will be retrieved here 
- *              landlord:
- *                  type: array
- *                  description: You need to create it from the landlord schema and the infromation will be retrieved here 
- *              name:
- *                  type: string
- *                  description: name of the user 
- *              lastname: 
- *                  type: string
- *                  description: lastname of the user 
- *              username: 
- *                  type: string
- *                  description: username of the user 
- *              email: 
- *                  type: string
- *                  description: email of the user 
- *              password: 
- *                  type: string
- *                  description: password of the user 
- *          examples:
- *              name: Ricardo 
- *              lastName: Nunez
- *              username: rnunezcu
- *              email: rnunezcu@mtu.edu
- *              password: orange123
- * 
- * 
-*/
-
-/**
  * @swagger
- * /users/{id}:
+ *  /api/smartments/users/{id}:
  *  get:
  *      description: get a single user, it required the id
  *  parameters:
@@ -77,9 +34,6 @@ const {Landlord } = require('../models/landlord');
  * 
  * 
  */
-
-
-
 //get user information with JWT 
 router.get('/:id', async (req, res) => {
     // const user = await User.findById(req.user._id).select('-password'); //hidding password
@@ -92,20 +46,7 @@ router.get('/:id', async (req, res) => {
 
 
 
-/**
- * @swagger
- * /users/:
- *  get:
- *      description: get a single user, it required the id
- *      responses:
- *          '200': 
- *              description: A succesful response 
- *  parameters:
- *      - in: path
- *        name: id
- *        description: it retrieves the user information
- * 
- */
+
 router.post('/', async (req, res) => {
     const result = validateUser(req.body);
     if (result.error) return res.status(400).send(result.error.details[0].message);
