@@ -55,7 +55,7 @@ const {Landlord } = require('../models/landlord');
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/smartments/users/{id}:
  *  get:
  *      description: get a single user, it required the id
  *  parameters:
@@ -82,11 +82,11 @@ const {Landlord } = require('../models/landlord');
 
 //get user information with JWT 
 router.get('/:id', async (req, res) => {
-    const user = await User.findById(req.user._id).select('-password'); //hidding password
+    // const user = await User.findById(req.user._id).select('-password'); //hidding password
     // const user = await User.findById(req.user._id);
 
-    // const user = await User.findById(req.params.id);
-    // if(!user) return res.status(404).send('The user with the given ID was not found');
+    const user = await User.findById(req.params.id);
+    if(!user) return res.status(404).send('The user with the given ID was not found');
     res.send(user);
 })
 
@@ -94,7 +94,7 @@ router.get('/:id', async (req, res) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/:
  *  get:
  *      description: get a single user, it required the id
  *      responses:
